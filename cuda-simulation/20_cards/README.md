@@ -287,6 +287,30 @@ passa, hai una conferma end-to-end molto solida: la pipeline completa
 (unranking + simulate + kernel persistente) funziona correttamente anche a
 scala di milioni di configurazioni, non solo sulle migliaia testate prima.
 
+Oltre all'output a schermo, lo script scrive un file di testo
+(`hits_validation_report.txt` di default, oppure il nome che passi come terzo
+argomento) con una tabella leggibile di ogni candidato: rank, turni GPU, turni
+Python, esito (`OK`/`MISMATCH`), e la sequenza di carte ricostruita:
+
+```
+!python3 validate_hits_20.py table_20.bin hits_20.bin report_20.txt
+```
+
+```
+Composizione: [14, 2, 2, 2]
+Carte totali: 20  meta': 10
+max_turns usato nella ricerca: 5000
+Candidati trovati: 3
+Turni massimi confermati in Python: 18
+Discrepanze GPU vs Python: 0
+
+           rank   turni_GPU  turni_Python     esito  sequenza
+----------------------------------------------------------------------------------------------------
+              0          18            18        OK  00000000000000112233
+          12345          16            16        OK  00000000002013123000
+        3488399          14            14        OK  33221100000000000000
+```
+
 ## 6. Cosa fare con i risultati
 
 Se trovi candidati con `turni >= 5000`, puoi ricostruire la configurazione
