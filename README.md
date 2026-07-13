@@ -2,6 +2,9 @@
 
 Programmi in C scritti con l'obiettivo di trovare configurazioni iniziali dei mazzi per cui si ha una partita infinita, ovvero si ottiene una configurazione già vista in precedenza nella stessa partita (ciclo).
 
+https://github.com/alessandro-gentilini/pelagaletto2
+https://github.com/drago-96/cavacamisa
+
 ## Introduzione
 Il gioco è la variante italiana del più noto all'estero "Beggar My Neighbour", giocato con carte da ramino. Anche per questo gioco si presenta la stessa potenziale sfida, che è stata già affrontata da molti, individuando alcune configurazioni che portano a partite infinite.
 
