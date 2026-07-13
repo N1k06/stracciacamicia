@@ -1,68 +1,51 @@
 # Stracciacamicia infinita
 
-Programmi in C scritti con l'obiettivo di trovare configurazioni iniziali dei mazzi per cui si ha una partita infinita, ovvero si ottiene una configurazione già vista in precedenza nella stessa partita (ciclo).
+Repository per la prototipazione e la ricerca di configurazioni iniziali che generano cicli infiniti nella variante italiana del gioco "Straccia Camicia" (simile a "Beggar My Neighbour").
 
-https://github.com/alessandro-gentilini/pelagaletto2
-https://github.com/drago-96/cavacamisa
+Basato su lavori precedenti e repository affini:
+- [alessandro-gentilini](https://github.com/alessandro-gentilini/pelagaletto2): ottima introduzione al problema e analisi dei cicli con 20 carte.
+- [drago-96](https://github.com/drago-96/cavacamisa): ricerca di partite infinite e ritrovamento del primo ciclo con 40 carte.
 
-## Introduzione
-Il gioco è la variante italiana del più noto all'estero "Beggar My Neighbour", giocato con carte da ramino. Anche per questo gioco si presenta la stessa potenziale sfida, che è stata già affrontata da molti, individuando alcune configurazioni che portano a partite infinite.
+Questo progetto unisce:
+- generazione e campionamento di permutazioni multiset per il mazzo reale da 40 carte
+- validazione Python delle funzioni di unranking e simulazione
+- implementazioni CUDA per test e ricerca su GPU
+- esperimenti su mazzi ridotti da 20 carte come passaggio di validazione
 
-## Configurazioni possibili
-Sfruttando la formula delle permutazioni con 40 carte, 12 carte vincenti e 28 carte generiche.
-40!/(4!4!4!28!)
-Esprimiamo le configurazioni come una sequenza di 40 numeri da una cifra, che poi verranno suddivise nei due mazzetti iniziali da 20 carte per i due giocatori.
+## Struttura del repository
 
-### Configurazioni non banali
-Configurazione banale: tutte le carte vincenti sono nel mazzetto di un giocatore o dell'altro
-2*(20!)/(4!4!4!8!)
+- `batches-generation/`
+  - `gen_perm_batches.py`: script Python che genera permutazioni distinte del mazzo da 40 carte con conteggi `[28, 4, 4, 4]` e le stampa a intervalli regolari.
+  - `perm_batches_200_000_000.txt`: esempio di output/serie di permutazioni pre-generate.
 
-Il totale delle configurazioni non banali sarà la differenza tra il numero precedente e questo, anche nell'ottica globale non è che ci sia chissà quale risparmio di tempo e spazio (le configurazioni banali sono 5 ordini di grandezza in meno rispetto al totale).
-Tuttavia, dato che alcune di esse si trovano all'inizio e alla fine delle permutazioni, tanto vale escluderle fin da subito (lasciando comunque quelle presenti in mezzo alle altre, si fa prima a simularle che a escluderle, sarebbe,come si suol dire, più la salsa che l'arrosto).
+- `cuda-simulation/`
+  - `README.md`: istruzioni dettagliate per la validazione e il test su Google Colab.
+  - `20_cards/`: implementazioni e script per la fase di sviluppo e test su mazzi ridotti di 20 carte.
+  - `40_cards/`: codice di simulazione e analisi per il mazzo reale di 40 carte.
 
-### Generazione delle permutazioni
-Possiamo considerare il mazzo come una sequenza ordinata, dove la prima configurazione è
-0000000000000000000000000000111122223333
-Mentre l'ultima è 
-3333222211110000000000000000000000000000
+## Contenuti principali
 
-### Configurazioni di partenza e di arrivo
-Alcune partite terminano sicuramente, per vale la pena escluderle. In particolare, sono facilmente identificabili le configurazioni dove non sono presenti carte vincenti in una delle due metà del mazzo.
+- `cuda-simulation/20_cards/straccia_common.py`: implementazione Python di riferimento per l'unranking e la simulazione delle regole del gioco.
+- `cuda-simulation/20_cards/gen_table_20.py`: genera tabelle multinomiali e dati di riferimento usati per validare la logica CUDA.
+- `cuda-simulation/20_cards/test_unrank.cu`, `validate_hits_20.py`, `validate_sample_20.cu`: test di correttezza e confronto tra GPU e riferimento Python.
+- `cuda-simulation/20_cards/search_full_20.cu`: versione GPU per enumerazione e ricerca su mazzi da 20 carte.
+- `cuda-simulation/40_cards/straccia_common.py`: versione Python di riferimento condivisa per le strutture dati e la simulazione.
+- `cuda-simulation/40_cards/straccia_search_40.cu`: kernel CUDA progettato per la ricerca ad alte prestazioni sul mazzo completo da 40 carte.
+- `cuda-simulation/40_cards/confirm_cycle.py`, `inspect_hits_40.py`: script di analisi per validare i risultati e ispezionare le configurazioni trovate.
 
-Prima configurazione non banale
-0000000000000000000033332222111100000000 (banale)
-diventa
-0000000000000000000100000000011122223333 (non banale)
+## Obiettivo del progetto
 
-Ultima configurazione non banale
-3333222211100000000010000000000000000000 (non banale)
-diventa
-3333222211100000000100000000000000000000 (banale)
+L'obiettivo non è creare un gioco completo, ma esplorare e validare una pipeline di ricerca per trovare configurazioni iniziali che producono una partita infinita. Il flusso tipico è:
 
-## Programmazione
+1. validare in Python la logica di unranking e simulazione su mazzi ridotti;
+2. testare le versioni CUDA contro i riferimenti Python;
+3. estendere la ricerca al mazzo completo da 40 carte;
+4. analizzare e confermare eventuali configurazioni cicliche trovate.
 
-## Architettura del programma
+## Come iniziare
 
-### Generazione batch di configurazioni
-Creazione di un file contenente un certo numero di configurazioni da testare, generate in ordine.
+1. Leggi `cuda-simulation/README.md` per i dettagli di setup e validazione su GPU.
+2. Usa `batches-generation/gen_perm_batches.py` per generare porzioni di permutazioni del mazzo da 40 carte.
+3. Esplora `cuda-simulation/20_cards` per capire la pipeline di validazione prima di passare al codice `40_cards`.
 
-Dimensione del batch?
-Circa 2*10^14 configurazioni, quindi scegliendo di creare 2*10^6 batch, si avrebbero 2*10^8 configurazioni per batch, e supponendo di usare 1 Byte a carattere, e che ciascuna configurazione sia composta da 40 caratteri, ogni file peserebbe circa 4GB.
-Questo permetterebbe al file di essere scaricato "agevolmente" e caricato in ram da quasi tutti i dispositivi (pc, smartphone, raspberry, ecc), rendendo percorribile un approccio distribuito al bruteforce.
-
-Velocità di generazione delle configurazioni su i7-6700K circa 6,5*10^5 configurazioni/secondo.
-Supponendo di generare configurazioni a pieno regime si avrebbero 6,5*3600*24*10^5 = 56160000000 = 5,61*10^10 configurazioni/giorno.
-Su hardware migliore è lecito supporre di avere velocità sensibilmente migliori.
-
-### Caricamento delle configurazioni e simulazione
-In parallelo usando pthread
-Focus sull'efficienza (array statici, uso più memoria ma più veloci)
-
-### Velocità media di simulazione
-Numero medio di partite al secondo
-
-## Utilizzo dei programmi
-
-### Generazione dei batch
-
-### Simulazione
+> Nota: la maggior parte dei file CUDA e dei test è orientata a verificare la correttezza della logica e ad analizzare il comportamento del gioco, non solo a eseguire partite singole.
