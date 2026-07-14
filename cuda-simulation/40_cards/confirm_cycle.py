@@ -125,28 +125,41 @@ def read_hits(path, with_header):
     return hits
 
 
-def print_result(label, result, max_turns):
+def print_result(label, result, max_turns, report_fh=None):
     if result[0] == "cycle":
         _, first_turn, cur_turn, cycle_len = result
-        print(f"{label} -> CICLO CONFERMATO: stato ripetuto dopo {cycle_len} turni "
-              f"(primo visto al turno {first_turn}, rivisto al turno {cur_turn})")
+        line = (f"{label} -> CICLO CONFERMATO: stato ripetuto dopo {cycle_len} turni "
+                f"(primo visto al turno {first_turn}, rivisto al turno {cur_turn})")
     elif result[0] == "terminated":
         _, real_turns = result
-        print(f"{label} -> NON è un ciclo: termina naturalmente al turno {real_turns}")
+        line = f"{label} -> NON è un ciclo: termina naturalmente al turno {real_turns}"
     else:
-        print(f"{label} -> INCONCLUSIVO: nessuno stato ripetuto e nessuna fine entro "
-              f"{max_turns} turni (aumenta --max-turns per un verdetto più certo)")
+        line = (f"{label} -> INCONCLUSIVO: nessuno stato ripetuto e nessuna fine entro "
+                f"{max_turns} turni (aumenta --max-turns per un verdetto più certo)")
+
+    print(line)
+    if report_fh:
+        report_fh.write(line + "\n")
 
 
-def run_single(deck, max_turns):
+def run_single(deck, max_turns, report_fh=None):
     half = len(deck) // 2
     counts_found = [deck.count(s) for s in range(4)]
-    print(f"Sequenza: {''.join(map(str, deck))}")
-    print(f"Carte totali: {len(deck)}  meta': {half}  composizione dedotta: {counts_found}")
-    print(f"Limite di sicurezza: {max_turns} turni\n")
+
+    lines = [
+        f"Sequenza: {''.join(map(str, deck))}",
+        f"Carte totali: {len(deck)}  meta': {half}  composizione dedotta: {counts_found}",
+        f"Limite di sicurezza: {max_turns} turni",
+        "",
+    ]
+    for l in lines:
+        print(l)
+    if report_fh:
+        for l in lines:
+            report_fh.write(l + "\n")
 
     result = find_cycle(deck[:half], deck[half:], max_turns)
-    print_result("Risultato", result, max_turns)
+    print_result("Risultato", result, max_turns, report_fh)
 
 
 def main():
@@ -165,7 +178,11 @@ def main():
                          help="limite di sicurezza sui turni (default 2.000.000)")
     parser.add_argument("--no-header", action="store_true",
                          help="il file hits_file non ha header (formato hits_40.bin)")
+    parser.add_argument("--report", type=str, default=None,
+                         help="salva l'output anche in questo file di testo, oltre a stamparlo a schermo")
     args = parser.parse_args()
+
+    report_fh = open(args.report, "w") if args.report else None
 
     # --- Modalita' 1: sequenza diretta ---
     if args.sequence:
@@ -176,7 +193,10 @@ def main():
         if len(deck) % 2 != 0:
             print("Errore: la sequenza deve avere un numero pari di carte (divisione a meta')")
             sys.exit(1)
-        run_single(deck, args.max_turns)
+        run_single(deck, args.max_turns, report_fh)
+        if report_fh:
+            report_fh.close()
+            print(f"\nReport salvato in {args.report}")
         return
 
     # --- Modalita' 2: singolo rank ---
@@ -189,7 +209,12 @@ def main():
         table, dims = build_table(counts)
         deck = unrank(table, dims, args.rank, counts)
         print(f"Rank: {args.rank}")
-        run_single(deck, args.max_turns)
+        if report_fh:
+            report_fh.write(f"Rank: {args.rank}\n")
+        run_single(deck, args.max_turns, report_fh)
+        if report_fh:
+            report_fh.close()
+            print(f"\nReport salvato in {args.report}")
         return
 
     # --- Modalita' 3: batch su file di hit ---
@@ -204,11 +229,23 @@ def main():
     hits = read_hits(args.hits_file, with_header=not args.no_header)
     half = sum(counts) // 2
 
-    print(f"Composizione: {counts}  carte totali: {sum(counts)}  meta': {half}")
-    print(f"Candidati da verificare: {len(hits)}  (limite di sicurezza: {args.max_turns} turni)\n")
+    header_lines = [
+        f"Composizione: {counts}  carte totali: {sum(counts)}  meta': {half}",
+        f"Candidati da verificare: {len(hits)}  (limite di sicurezza: {args.max_turns} turni)",
+        "",
+    ]
+    for l in header_lines:
+        print(l)
+    if report_fh:
+        for l in header_lines:
+            report_fh.write(l + "\n")
 
     if not hits:
         print("Nessun candidato nel file.")
+        if report_fh:
+            report_fh.write("Nessun candidato nel file.\n")
+            report_fh.close()
+            print(f"\nReport salvato in {args.report}")
         return
 
     print("Costruzione tabella multinomiale...")
@@ -223,7 +260,7 @@ def main():
         result = find_cycle(deck[:half], deck[half:], args.max_turns)
 
         label = f"[{i+1}/{len(hits)}] rank={rank}  turni_screening={turns_screening} "
-        print_result(label, result, args.max_turns)
+        print_result(label, result, args.max_turns, report_fh)
 
         if result[0] == "cycle":
             n_cycles += 1
@@ -232,10 +269,20 @@ def main():
         else:
             n_inconclusive += 1
 
-    print(f"\n=== RIEPILOGO ===")
-    print(f"Cicli infiniti CONFERMATI:  {n_cycles}")
-    print(f"Falsi positivi (finiscono): {n_terminated}")
-    print(f"Inconclusivi:               {n_inconclusive}")
+    summary_lines = [
+        "",
+        "=== RIEPILOGO ===",
+        f"Cicli infiniti CONFERMATI:  {n_cycles}",
+        f"Falsi positivi (finiscono): {n_terminated}",
+        f"Inconclusivi:               {n_inconclusive}",
+    ]
+    for l in summary_lines:
+        print(l)
+    if report_fh:
+        for l in summary_lines:
+            report_fh.write(l + "\n")
+        report_fh.close()
+        print(f"\nReport salvato in {args.report}")
 
 
 if __name__ == "__main__":

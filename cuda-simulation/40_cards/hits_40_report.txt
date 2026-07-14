@@ -1,1 +1,90 @@
-Nessun candidato trovato finora.
+Composizione: [28, 4, 4, 4]  carte totali: 40  meta': 20
+Candidati da verificare: 82  (limite di sicurezza: 200000 turni)
+
+[1/82] rank=230084040307  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4016
+[2/82] rank=299865972364  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4004
+[3/82] rank=343820571288  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4066
+[4/82] rank=358692332100  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4001
+[5/82] rank=372323908061  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4132
+[6/82] rank=450543981559  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4044
+[7/82] rank=556864025767  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4064
+[8/82] rank=604960931632  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4004
+[9/82] rank=649797222495  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 233 turni (primo visto al turno 23, rivisto al turno 256)
+[10/82] rank=649797223081  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 232 turni (primo visto al turno 23, rivisto al turno 255)
+[11/82] rank=649797222535  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 232 turni (primo visto al turno 23, rivisto al turno 255)
+[12/82] rank=677667228871  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4273
+[13/82] rank=749076625459  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4012
+[14/82] rank=781138535738  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4040
+[15/82] rank=803390739696  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4039
+[16/82] rank=843073322204  turni_screening=4006  -> NON è un ciclo: termina naturalmente al turno 4049
+[17/82] rank=958548292958  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4000
+[18/82] rank=975232197347  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4060
+[19/82] rank=1086027741428  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4005
+[20/82] rank=1086100246207  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4062
+[21/82] rank=1091930902657  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4008
+[22/82] rank=1137104982901  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 232 turni (primo visto al turno 22, rivisto al turno 254)
+[23/82] rank=1137104982315  turni_screening=4001  -> CICLO CONFERMATO: stato ripetuto dopo 233 turni (primo visto al turno 22, rivisto al turno 255)
+[24/82] rank=1137104982355  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 232 turni (primo visto al turno 22, rivisto al turno 254)
+[25/82] rank=1168193515128  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4128
+[26/82] rank=1183375255451  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4055
+[27/82] rank=1455493016701  turni_screening=4002  -> NON è un ciclo: termina naturalmente al turno 4045
+[28/82] rank=1509687589237  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4144
+[29/82] rank=1758046822995  turni_screening=4002  -> NON è un ciclo: termina naturalmente al turno 4008
+[30/82] rank=1808577777414  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4000
+[31/82] rank=1865051129137  turni_screening=4005  -> NON è un ciclo: termina naturalmente al turno 4007
+[32/82] rank=2010377642407  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4269
+[33/82] rank=2017549279256  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4022
+[34/82] rank=2119055991476  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4016
+[35/82] rank=2138936721164  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4040
+[36/82] rank=2438679243903  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4004
+[37/82] rank=2454151414227  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4041
+[38/82] rank=2459884962372  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4040
+[39/82] rank=2625717022928  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4058
+[40/82] rank=2910102068361  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4000
+[41/82] rank=3308319398635  turni_screening=4005  -> NON è un ciclo: termina naturalmente al turno 4124
+[42/82] rank=3635702822204  turni_screening=4002  -> NON è un ciclo: termina naturalmente al turno 4227
+[43/82] rank=3840480960449  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4030
+[44/82] rank=3845480889366  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4011
+[45/82] rank=4031847787315  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4036
+[46/82] rank=4070242888766  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4092
+[47/82] rank=4319502275295  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4111
+[48/82] rank=4434166494330  turni_screening=4002  -> NON è un ciclo: termina naturalmente al turno 4109
+[49/82] rank=4649839876597  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4060
+[50/82] rank=4920093722450  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4515
+[51/82] rank=5291837785109  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4310
+[52/82] rank=5420509100816  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4131
+[53/82] rank=5455361948133  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4018
+[54/82] rank=5568571264159  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4108
+[55/82] rank=5685778353369  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4051
+[56/82] rank=5691240815614  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4012
+[57/82] rank=5710386600264  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4108
+[58/82] rank=5866816650198  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4054
+[59/82] rank=5877590188085  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4139
+[60/82] rank=5895451798394  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4223
+[61/82] rank=5954314660840  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4007
+[62/82] rank=5968211776864  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4141
+[63/82] rank=6053605836598  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4024
+[64/82] rank=6220903248816  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4010
+[65/82] rank=6385291869426  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4070
+[66/82] rank=6712924058915  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4013
+[67/82] rank=7040664619558  turni_screening=4004  -> NON è un ciclo: termina naturalmente al turno 4252
+[68/82] rank=7126826553910  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4105
+[69/82] rank=7157721055192  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4205
+[70/82] rank=7232631644689  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4029
+[71/82] rank=7462710637726  turni_screening=4008  -> NON è un ciclo: termina naturalmente al turno 4096
+[72/82] rank=7464287577484  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4056
+[73/82] rank=7612749004603  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4398
+[74/82] rank=7624845063436  turni_screening=4002  -> NON è un ciclo: termina naturalmente al turno 4058
+[75/82] rank=7877905804955  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4514
+[76/82] rank=7897810405076  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4054
+[77/82] rank=7940399193600  turni_screening=4000  -> CICLO CONFERMATO: stato ripetuto dopo 156 turni (primo visto al turno 3, rivisto al turno 159)
+[78/82] rank=8218109243266  turni_screening=4003  -> NON è un ciclo: termina naturalmente al turno 4301
+[79/82] rank=8847701588562  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4028
+[80/82] rank=9034079816423  turni_screening=4001  -> NON è un ciclo: termina naturalmente al turno 4069
+[81/82] rank=9196288602703  turni_screening=4006  -> NON è un ciclo: termina naturalmente al turno 4110
+[82/82] rank=9308266464631  turni_screening=4000  -> NON è un ciclo: termina naturalmente al turno 4013
+
+=== RIEPILOGO ===
+Cicli infiniti CONFERMATI:  7
+Falsi positivi (finiscono): 75
+Inconclusivi:               0
