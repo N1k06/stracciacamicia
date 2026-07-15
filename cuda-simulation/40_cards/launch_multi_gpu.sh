@@ -1,15 +1,22 @@
 #!/bin/bash
 # launch_multi_gpu.sh
 #
-# Divide lo spazio totale delle configurazioni in N porzioni uguali (N = numero
-# di GPU rilevate sull'istanza) e lancia un processo indipendente per ciascuna,
+# Divide la porzione RIMANENTE dello spazio delle configurazioni (dal punto di
+# ripresa RESUME_FROM fino alla fine) in N parti uguali (N = numero di GPU
+# rilevate sull'istanza) e lancia un processo indipendente per ciascuna,
 # isolato tramite CUDA_VISIBLE_DEVICES. Ogni processo ha il proprio checkpoint
 # e il proprio file di hit, cosi' non c'e' alcuna necessita' di comunicazione
 # o sincronizzazione tra le GPU (il problema e' perfettamente parallelizzabile:
 # ogni batch/porzione e' indipendente dalle altre).
 #
 # Uso:
-#   ./launch_multi_gpu.sh [max_turns=5000] [time_budget_seconds=360000] [target_batch_seconds=60]
+#   ./launch_multi_gpu.sh [max_turns=5000] [time_budget_seconds=360000] [target_batch_seconds=60] [resume_from=0]
+#
+# resume_from: usalo per riprendere da un progresso gia' fatto altrove (es. un
+# checkpoint.txt di un run precedente su Colab a singola GPU) invece di
+# ripartire dall'inizio dell'intero spazio. Leggi il valore dal vecchio
+# checkpoint.txt e passalo qui -- lo script dividera' equamente tra le GPU
+# solo la porzione [resume_from, totale), non l'intero spazio da zero.
 #
 # Presuppone che straccia_search_40.cu sia gia' compilato come ./straccia_search_40
 # (vedi VASTAI_INSTRUCTIONS.md per la compilazione) e che multinomial_table.bin
@@ -20,6 +27,7 @@ set -e
 MAX_TURNS="${1:-5000}"
 TIME_BUDGET="${2:-360000}"
 TARGET_BATCH_SECONDS="${3:-60}"
+RESUME_FROM="${4:-0}"
 TABLE="multinomial_table.bin"
 TOTAL_SPACE=193584473082000   # multinomial(28,4,4,4), costante nota per il mazzo reale
 
@@ -31,6 +39,10 @@ if [ ! -x "./straccia_search_40" ]; then
     echo "Errore: ./straccia_search_40 non trovato o non eseguibile. Compilalo prima."
     exit 1
 fi
+if [ "$RESUME_FROM" -ge "$TOTAL_SPACE" ]; then
+    echo "Errore: resume_from ($RESUME_FROM) e' >= dello spazio totale ($TOTAL_SPACE). Nulla da fare."
+    exit 1
+fi
 
 N_GPUS=$(nvidia-smi -L | wc -l)
 if [ "$N_GPUS" -eq 0 ]; then
@@ -38,16 +50,22 @@ if [ "$N_GPUS" -eq 0 ]; then
     exit 1
 fi
 
+REMAINING=$(( TOTAL_SPACE - RESUME_FROM ))
+
 echo "GPU rilevate: $N_GPUS"
 echo "Spazio totale: $TOTAL_SPACE configurazioni"
-echo "Porzione per GPU: $((TOTAL_SPACE / N_GPUS)) configurazioni circa"
+if [ "$RESUME_FROM" -gt 0 ]; then
+    echo "Ripresa da: $RESUME_FROM (progresso gia' fatto altrove)"
+    echo "Porzione rimanente da dividere: $REMAINING configurazioni ($(awk "BEGIN{printf \"%.2f\", 100.0*$RESUME_FROM/$TOTAL_SPACE}")% gia' completato)"
+fi
+echo "Porzione per GPU: $((REMAINING / N_GPUS)) configurazioni circa"
 echo ""
 
 mkdir -p logs
 
 for ((i=0; i<N_GPUS; i++)); do
-    RANGE_START=$(( TOTAL_SPACE * i / N_GPUS ))
-    RANGE_END=$(( TOTAL_SPACE * (i+1) / N_GPUS ))
+    RANGE_START=$(( RESUME_FROM + REMAINING * i / N_GPUS ))
+    RANGE_END=$(( RESUME_FROM + REMAINING * (i+1) / N_GPUS ))
     # L'ultima GPU copre fino alla fine esatta, senza arrotondamenti persi
     if [ "$i" -eq $((N_GPUS - 1)) ]; then
         RANGE_END=0   # 0 = "fino alla fine dello spazio totale" per il programma
@@ -59,7 +77,7 @@ for ((i=0; i<N_GPUS; i++)); do
 
     echo "GPU $i: range [$RANGE_START, ${RANGE_END:-fine}) -> checkpoint=$CHECKPOINT hits=$HITS log=$LOG"
 
-    CUDA_VISIBLE_DEVICES=$i nohup ./straccia_search_40 \
+    CUDA_VISIBLE_DEVICES=$i nohup stdbuf -oL -eL ./straccia_search_40 \
         "$TABLE" 10000000 "$MAX_TURNS" 100000 "$TIME_BUDGET" \
         "$CHECKPOINT" "$HITS" "$TARGET_BATCH_SECONDS" 2048 256 \
         "$RANGE_START" "$RANGE_END" \
