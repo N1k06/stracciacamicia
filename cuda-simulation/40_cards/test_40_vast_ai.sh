@@ -9,14 +9,15 @@ git clone https://github.com/N1k06/stracciacamicia \
 # try to compile for rtx 5090
 nvcc -O3 -arch=sm_120 --ptxas-options=-v straccia_search_40_multigpu.cu -o straccia_search_40
 
-# run quick test for 1 min
-./straccia_search_40 multinomial_table.bin 10000000 4500 100000 60 \
-    ./checkpoint_test.txt \
-    ./hits_test.bin
-
 chmod +x launch_multi_gpu.sh merge_and_status.sh \
-    &&./launch_multi_gpu.sh 4500 360000 60
+    &&./launch_multi_gpu.sh 4500 360000 60 <checkpoint_number>
 
-# inspect hits and generate report
-python inspect_hits_40.py ./hits_40.bin \
-    ./hits_40_report.txt
+# unisci i file di hit delle due GPU e controlla lo stato
+./merge_and_status.sh
+
+#riverifica ogni candidato in Python — usa max_turns=4500 (quello reale di questo run!)
+python3 inspect_hits_40.py hits_40_merged.bin hits_40_report.txt 4500
+
+# il passo che conta davvero: verifica se sono cicli GENUINI o solo partite lunghe troncate
+python3 confirm_cycle.py --counts 28,4,4,4 hits_40_merged.bin \
+    --no-header --max-turns 2000000 --report cycles_report.txt

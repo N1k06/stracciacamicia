@@ -62,14 +62,24 @@ echo "Porzione per GPU: $((REMAINING / N_GPUS)) configurazioni circa"
 echo ""
 
 mkdir -p logs
+: > run_state.txt   # azzera/crea il file di metadati per questo lancio
+echo "$TOTAL_SPACE" >> run_state.txt
+echo "$RESUME_FROM" >> run_state.txt
 
 for ((i=0; i<N_GPUS; i++)); do
     RANGE_START=$(( RESUME_FROM + REMAINING * i / N_GPUS ))
     RANGE_END=$(( RESUME_FROM + REMAINING * (i+1) / N_GPUS ))
     # L'ultima GPU copre fino alla fine esatta, senza arrotondamenti persi
+    EFFECTIVE_END=$RANGE_END
     if [ "$i" -eq $((N_GPUS - 1)) ]; then
-        RANGE_END=0   # 0 = "fino alla fine dello spazio totale" per il programma
+        RANGE_END=0        # 0 = "fino alla fine dello spazio totale" per il programma
+        EFFECTIVE_END=$TOTAL_SPACE   # valore reale (non il sentinella 0) da salvare nei metadati
     fi
+
+    # Salva il confine REALE (mai 0-come-sentinella) cosi' merge_and_status.sh
+    # puo' calcolare quanto ciascuna GPU ha effettivamente da fare, senza dover
+    # replicare la logica del sentinella "0 = fino alla fine".
+    echo "$i $RANGE_START $EFFECTIVE_END" >> run_state.txt
 
     CHECKPOINT="checkpoint_gpu${i}.txt"
     HITS="hits_gpu${i}.bin"
@@ -90,4 +100,4 @@ echo ""
 echo "Tutti i $N_GPUS processi sono stati lanciati in background."
 echo "Monitora con:  tail -f logs/gpu0.log   (o il numero che ti interessa)"
 echo "Controlla tutti i processi con:  jobs -l"
-echo "Controlla il progresso di tutte le GPU con:  for f in checkpoint_gpu*.txt; do echo -n \"\$f: \"; cat \$f; done"
+echo "Controlla il progresso complessivo con:  ./merge_and_status.sh"
