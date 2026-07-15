@@ -308,6 +308,7 @@ int main(int argc, char **argv) {
            max_turns, max_hits, time_budget_seconds);
     printf("Checkpoint: %s (ripresa da batch_start=%llu)\n\n",
            checkpoint_path, (unsigned long long)resume_start);
+    fflush(stdout);
 
     if (resume_start >= total) {
         printf("Il checkpoint indica che la ricerca e' gia' completa (resume_start >= totale).\n");
@@ -387,7 +388,16 @@ int main(int argc, char **argv) {
         total_hits_this_run += n_to_copy;
 
         double throughput_m = (this_batch_size / 1e6) / (ms / 1000.0);
-        double pct_total = 100.0 * next_batch_start / (double)total;
+        // Percentuale di completamento della porzione ASSEGNATA a questo processo
+        // (non dello spazio assoluto): sottrae range_start_arg, il punto di
+        // partenza fissato al lancio, cosi' il progresso parte correttamente da
+        // 0% indipendentemente da quanto range_start_arg sia grande in valore
+        // assoluto (rilevante nei lanci multi-GPU, dove ogni processo copre
+        // solo una fetta che non inizia da 0).
+        double assigned_size = (double)(total - range_start_arg);
+        double pct_total = assigned_size > 0
+            ? 100.0 * (double)(next_batch_start - range_start_arg) / assigned_size
+            : 100.0;
 
         printf("batch_start=%llu  size=%llu  tempo=%.2fs  throughput=%.1fM/s  hit=%u  progresso=%.6f%%",
                (unsigned long long)batch_start, (unsigned long long)this_batch_size,
@@ -412,6 +422,9 @@ int main(int argc, char **argv) {
             printf("  [prossimo batch_size auto-tarato: %llu]", (unsigned long long)current_batch_size);
         }
         printf("\n");
+        fflush(stdout);  // fondamentale quando l'output e' rediretto su file (nohup/log): senza,
+                          // la libc passa a buffering "a blocchi" e le righe restano invisibili
+                          // in coda finche' il buffer non si riempie o il programma non termina
 
         long elapsed = std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::steady_clock::now() - t_run_start).count();
