@@ -9,8 +9,9 @@ git clone https://github.com/N1k06/stracciacamicia \
 # try to compile for rtx 5090
 nvcc -O3 -arch=sm_120 --ptxas-options=-v straccia_search_40_multigpu.cu -o straccia_search_40
 
-chmod +x launch_multi_gpu.sh merge_and_status.sh \
-    &&./launch_multi_gpu.sh 4500 360000 60 <checkpoint_number>
+chmod +x launch_multi_gpu.sh merge_and_status.sh
+
+./launch_multi_gpu.sh 4500 360000 60 <checkpoint_number>
 
 # unisci i file di hit delle due GPU e controlla lo stato
 ./merge_and_status.sh
