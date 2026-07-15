@@ -4,12 +4,11 @@ ssh -p <porta> root@<ip>
 
 # download repo and move inside working directory
 git clone https://github.com/N1k06/stracciacamicia \
-    && cd stracciacamicia/cuda-simulation/40_cards
+    && cd stracciacamicia/cuda-simulation/40_cards \
+    && chmod +x launch_multi_gpu.sh merge_and_status.sh
 
-# try to compile for rtx 5090
+# compile for rtx 5090
 nvcc -O3 -arch=sm_120 --ptxas-options=-v straccia_search_40_multigpu.cu -o straccia_search_40
-
-chmod +x launch_multi_gpu.sh merge_and_status.sh
 
 ./launch_multi_gpu.sh 4500 72000 60 32980609649366 10000000
 
