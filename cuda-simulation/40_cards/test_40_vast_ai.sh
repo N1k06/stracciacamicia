@@ -11,10 +11,10 @@ nvcc -O3 -arch=sm_120 --ptxas-options=-v straccia_search_40_multigpu.cu -o strac
 
 chmod +x launch_multi_gpu.sh merge_and_status.sh
 
-./launch_multi_gpu.sh 4500 360000 60 <checkpoint_number>
+./launch_multi_gpu.sh 4500 72000 60 32980609649366 10000000
 
 # unisci i file di hit delle due GPU e controlla lo stato
-./merge_and_status.sh
+watch -n 30 ./merge_and_status.sh   # controlla ogni 30 secondi
 
 #riverifica ogni candidato in Python — usa max_turns=4500 (quello reale di questo run!)
 python3 inspect_hits_40.py hits_40_merged.bin hits_40_report.txt 4500
