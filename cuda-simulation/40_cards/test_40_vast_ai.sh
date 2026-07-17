@@ -12,6 +12,9 @@ nvcc -O3 -arch=sm_120 --ptxas-options=-v straccia_search_40_multigpu.cu -o strac
 
 ./launch_multi_gpu.sh 4500 72000 60 32980609649366 10000000
 
+
+cat logs/gpu0.log
+cat logs/gpu1.log
 # unisci i file di hit delle due GPU e controlla lo stato
 watch -n 30 ./merge_and_status.sh   # controlla ogni 30 secondi
 

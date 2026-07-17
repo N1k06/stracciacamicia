@@ -5,6 +5,7 @@ Repository per la prototipazione e la ricerca di configurazioni iniziali che gen
 Basato su lavori precedenti e repository affini:
 - [alessandro-gentilini](https://github.com/alessandro-gentilini/pelagaletto2): ottima introduzione al problema e analisi dei cicli con 20 carte.
 - [drago-96](https://github.com/drago-96/cavacamisa): ricerca di partite infinite e ritrovamento del primo ciclo con 40 carte.
+- [pagina-facebook](https://www.facebook.com/profile.php?id=100054409890366): ricerca e condivisione di partite lunghe.
 
 Questo progetto unisce:
 - generazione e campionamento di permutazioni multiset per il mazzo reale da 40 carte
